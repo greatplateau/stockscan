@@ -1,0 +1,50 @@
+from pattern.web import URL, extension, cache
+from os import listdir
+import os
+
+#read codes from file and download data by several batches
+#because there is a length limit to the url, roughly 4096 charaters
+code_file = 'asx_codes.csv'
+basic_url = 'http://finance.yahoo.com/d/quotes.csv?f=sj1l1&s='
+all_data_file = 'all_data.csv'
+
+lines = [line.rstrip('\n') for line in open('asx_codes.csv')]
+
+url_list = []
+temp_url = basic_url
+for l in lines:
+  if len(temp_url) < 4000:
+    temp_url += l + "+"
+  else:
+    temp_url = temp_url[:-1]
+    url_list.append(temp_url)
+    temp_url = basic_url
+
+temp_url = temp_url[:-1]
+url_list.append(temp_url)    
+
+#delete all quote*
+quote_files = [f for f in listdir('.') if 'quote' in f]
+for f in quote_files:
+  os.remove(f)
+os.remove(all_data_file)
+
+#download from yahoo by several batches
+i = 1
+for u in url_list:
+  cache.clear()
+  url = URL(u)
+  print 'Downloading: ' + u + '\n'
+  f = open('quote_' + str(i) + '.csv', 'wb')
+  f.write(url.download())
+  f.close()
+  i += 1
+
+#combine several quote_x.csv together so we get data for all codes
+quote_files = [f for f in listdir('.') if 'quote' in f]
+with open(all_data_file, 'w') as outfile:
+    for fname in quote_files:
+        with open(fname) as infile:
+            outfile.write(infile.read())
+
+

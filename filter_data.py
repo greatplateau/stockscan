@@ -1,0 +1,28 @@
+import csv
+import sys
+
+data_filtered = 'data_filtered.csv'
+
+ifile  = open(sys.argv[1], "rb")
+reader = csv.reader(ifile)
+ofile  = open(data_filtered, "wb")
+writer = csv.writer(ofile, delimiter=',')
+
+for row in reader:
+    market_cap = row[1]
+
+    if not 'N/A' in market_cap:
+     if 'M' in market_cap:
+      mc = float(market_cap[:-1]) * 1000000
+     elif 'B' in market_cap:
+      mc = float(market_cap[:-1]) * 1000000000
+     else:
+      mc = float(market_cap)
+    
+     if mc <= 50000000:
+      writer.writerow(row)
+
+ifile.close()
+ofile.close()
+
+
