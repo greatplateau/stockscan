@@ -5,7 +5,7 @@ import os
 #read codes from file and download data by several batches
 #because there is a length limit to the url, roughly 4096 charaters
 code_file = 'asx_codes.csv'
-basic_url = 'http://finance.yahoo.com/d/quotes.csv?f=sj1l1&s='
+basic_url = 'http://finance.yahoo.com/d/quotes.csv?f=sj1f6b4l1k3c1p2ohgva2pkjk4j5k5j6ej4rr5m3m4m5m6m7m8&s='
 all_data_file = 'all_data.csv'
 
 lines = [line.rstrip('\n') for line in open('asx_codes.csv')]
@@ -27,7 +27,8 @@ url_list.append(temp_url)
 quote_files = [f for f in listdir('.') if 'quote' in f]
 for f in quote_files:
   os.remove(f)
-os.remove(all_data_file)
+if os.path.isfile(all_data_file):
+  os.remove(all_data_file)
 
 #download from yahoo by several batches
 i = 1
